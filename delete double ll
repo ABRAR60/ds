@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a doubly linked list node
+struct node {
+    int value;
+    struct node *prev; // Pointer to the previous node
+    struct node *next; // Pointer to the next node
+};
+
+typedef struct node DATA_NODE;
+DATA_NODE *head_node = NULL; // Initialize head node as NULL
+
+// Function prototypes
+void insert();
+void deleteNode();
+void display();
+
+int main() {
+    int option = 0;
+
+    printf("Doubly Linked List Example - Insertion, Deletion, and Display\n");
+
+    while (option != 4) {
+        printf("\nOptions:\n");
+        printf("1: Insert into Linked List\n");
+        printf("2: Delete from Linked List\n");
+        printf("3: Display Linked List\n");
+        printf("4: Exit\n");
+        printf("Enter your Option: ");
+        scanf("%d", &option);
+
+        switch (option) {
+            case 1:
+                insert();
+                break;
+            case 2:
+                deleteNode();
+                break;
+            case 3:
+                display();
+                break;
+            case 4:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid option! Please try again.\n");
+        }
+    }
+
+    return 0;
+}
+
+// Function to insert a new node into the doubly linked list
+void insert() {
+    int data;
+    printf("\nEnter Element to Insert into Linked List: ");
+    scanf("%d", &data);
+
+    DATA_NODE *temp_node = (DATA_NODE *)malloc(sizeof(DATA_NODE));
+    if (temp_node == NULL) {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    temp_node->value = data;
+    temp_node->prev = NULL;
+    temp_node->next = NULL;
+
+    // If the list is empty, make the new node the head
+    if (head_node == NULL) {
+        head_node = temp_node;
+    } else {
+        // Traverse to the end of the list and insert the new node
+        DATA_NODE *current = head_node;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = temp_node;
+        temp_node->prev = current;
+    }
+
+    printf("Inserted %d into the linked list.\n", data);
+}
+
+// Function to delete a node from the doubly linked list
+void deleteNode() {
+    if (head_node == NULL) {
+        printf("\nThe list is empty! Nothing to delete.\n");
+        return;
+    }
+
+    int data;
+    printf("\nEnter Element to Delete from Linked List: ");
+    scanf("%d", &data);
+
+    DATA_NODE *current = head_node;
+
+    // Traverse the list to find the node with the given value
+    while (current != NULL && current->value != data) {
+        current = current->next;
+    }
+
+    if (current == NULL) {
+        printf("Element %d not found in the list.\n", data);
+        return;
+    }
+
+    // If the node to delete is the head node
+    if (current == head_node) {
+        head_node = current->next;
+        if (head_node != NULL) {
+            head_node->prev = NULL;
+        }
+    } else {
+        // Update the pointers of the previous and next nodes
+        if (current->next != NULL) {
+            current->next->prev = current->prev;
+        }
+        if (current->prev != NULL) {
+            current->prev->next = current->next;
+        }
+    }
+
+    free(current); // Free the memory of the deleted node
+    printf("Deleted element %d from the linked list.\n", data);
+}
+
+// Function to display the doubly linked list
+void display() {
+    if (head_node == NULL) {
+        printf("\nThe list is empty!\n");
+        return;
+    }
+
+    printf("\nLinked List Elements:\n");
+    DATA_NODE *current = head_node;
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
+    }
+    printf("\n");
+}
